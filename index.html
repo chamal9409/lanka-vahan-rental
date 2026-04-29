@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Lanka Vahan | Vehicle Hire & Rent</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(145deg, #f0f4f8 0%, #d9e2ec 100%); padding: 20px; min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* Header */
+        .header { background: linear-gradient(135deg, #0f172a, #1e293b); border-radius: 40px; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-bottom: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .logo { display: flex; align-items: center; gap: 15px; }
+        .logo-icon { width: 55px; height: 55px; background: linear-gradient(135deg, #f5b042, #e67e22); border-radius: 25px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; }
+        .logo-text h1 { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #fff, #f5b042); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-text p { color: #f5b042; font-size: 12px; letter-spacing: 2px; }
+        .user-card { background: rgba(255,255,255,0.1); padding: 12px 25px; border-radius: 50px; cursor: pointer; display: flex; align-items: center; gap: 12px; backdrop-filter: blur(5px); }
+        .admin-badge { background: #dc3545; padding: 4px 12px; border-radius: 30px; font-size: 11px; margin-left: 10px; }
+        
+        /* Hire/Rent Toggle Buttons */
+        .toggle-buttons { display: flex; gap: 20px; margin-bottom: 30px; justify-content: center; }
+        .toggle-btn { padding: 14px 40px; border: none; border-radius: 60px; font-size: 18px; font-weight: 700; cursor: pointer; transition: 0.3s; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .toggle-btn.active-hire { background: #1e4a76; color: white; }
+        .toggle-btn.active-rent { background: #2d6a4f; color: white; }
+        
+        /* Search Bar */
+        .search-card { background: white; border-radius: 60px; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 35px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .search-card input, .search-card select { flex: 2; padding: 14px 22px; border: none; background: #f5f7fa; border-radius: 50px; font-size: 15px; outline: none; }
+        .btn-gold { background: linear-gradient(135deg, #f5b042, #e67e22); border: none; padding: 14px 32px; border-radius: 50px; font-weight: 600; color: white; cursor: pointer; transition: 0.3s; }
+        .btn-gold:hover { transform: translateY(-2px); }
+        
+        /* Post Ad Form */
+        .post-card { background: rgba(255,255,255,0.97); border-radius: 35px; padding: 30px; margin-bottom: 35px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 18px; }
+        .post-card input, .post-card select, .post-card textarea { padding: 14px 18px; border: 2px solid #e2e8f0; border-radius: 30px; font-size: 14px; }
+        .post-card input:focus, .post-card select:focus, .post-card textarea:focus { border-color: #f5b042; outline: none; }
+        
+        /* User Dashboard Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; border-radius: 28px; padding: 22px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .stat-card i { font-size: 40px; color: #f5b042; }
+        .stat-card h3 { font-size: 32px; font-weight: 800; }
+        
+        /* Ads Grid */
+        .ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 28px; margin: 30px 0; }
+        .ad-card { background: white; border-radius: 32px; overflow: hidden; transition: all 0.3s; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .ad-card:hover { transform: translateY(-5px); }
+        .ad-card.featured { border: 2px solid #f5b042; box-shadow: 0 0 0 3px rgba(245,176,66,0.2); }
+        .img-gallery { background: #e2e8f0; height: 200px; display: flex; overflow-x: auto; gap: 5px; cursor: pointer; }
+        .img-gallery img { height: 100%; width: auto; object-fit: cover; }
+        .ad-content { padding: 22px; }
+        .vehicle-tag { display: inline-block; background: linear-gradient(135deg, #f5b042, #e67e22); padding: 5px 15px; border-radius: 30px; font-size: 12px; font-weight: 600; color: white; }
+        .desc-text { color: #4a5568; line-height: 1.6; margin: 12px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .expand-btn { background: none; border: none; color: #f5b042; cursor: pointer; font-size: 13px; }
+        .call-buttons { display: flex; gap: 12px; margin: 15px 0; flex-wrap: wrap; }
+        .btn-call { background: #1e4a76; color: white; text-decoration: none; padding: 10px 18px; border-radius: 40px; font-size: 14px; }
+        .btn-wa { background: #25D366; color: white; text-decoration: none; padding: 10px 18px; border-radius: 40px; font-size: 14px; }
+        .admin-actions { margin-top: 12px; display: flex; gap: 10px; }
+        .admin-del { background: #dc3545; color: white; border: none; padding: 6px 15px; border-radius: 25px; cursor: pointer; }
+        .admin-feat { background: #f5b042; border: none; padding: 6px 15px; border-radius: 25px; cursor: pointer; }
+        .pagination { display: flex; justify-content: center; gap: 12px; margin: 35px 0; }
+        .pagination button { background: #1e2f46; color: white; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; }
+        footer { background: #0f172a; border-radius: 35px; padding: 30px; color: white; text-align: center; margin-top: 45px; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: white; padding: 35px; border-radius: 48px; width: 90%; max-width: 400px; }
+        .my-ads-list { max-height: 300px; overflow-y: auto; }
+        .my-ad-item { background: #f8f9fa; border-radius: 20px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .hidden { display: none; }
+        @media (max-width: 700px) { .search-card { flex-direction: column; border-radius: 35px; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-car-side"></i></div>
+            <div class="logo-text">
+                <h1>Lanka Vahan</h1>
+                <p>HIRE • RENT • DRIVE</p>
+            </div>
+        </div>
+        <div class="user-card" id="userBtn">
+            <i class="fas fa-user-circle"></i> <span id="userNameDisplay">Guest</span>
+            <span id="adminBadge" class="admin-badge hidden">ADMIN</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+
+    <!-- Hire / Rent Toggle -->
+    <div class="toggle-buttons">
+        <button class="toggle-btn" id="hireToggleBtn">🚗 HIRE (Need Vehicle)</button>
+        <button class="toggle-btn" id="rentToggleBtn">🔑 RENT (Offer Vehicle)</button>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-card">
+        <input type="text" id="searchInput" placeholder="🔍 Search vehicle...">
+        <select id="districtFilter">
+            <option value="">All Districts (25)</option>
+            <option>Colombo</option><option>Gampaha</option><option>Kalutara</option><option>Kandy</option>
+            <option>Matale</option><option>Nuwara Eliya</option><option>Galle</option><option>Matara</option>
+            <option>Hambantota</option><option>Jaffna</option><option>Kilinochchi</option><option>Mannar</option>
+            <option>Vavuniya</option><option>Mullaitivu</option><option>Batticaloa</option><option>Ampara</option>
+            <option>Trincomalee</option><option>Kurunegala</option><option>Puttalam</option><option>Anuradhapura</option>
+            <option>Polonnaruwa</option><option>Badulla</option><option>Monaragala</option><option>Ratnapura</option>
+            <option>Kegalle</option>
+        </select>
+        <button class="btn-gold" id="searchBtn"><i class="fas fa-search"></i> Search</button>
+    </div>
+
+    <!-- Post Ad Form -->
+    <div class="post-card" id="postForm">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-plus-circle"></i> Post Your Ad</h3>
+        <div class="form-grid">
+            <select id="adTypeSelect">
+                <option value="hire">🔹 HIRE - Need Vehicle (කුලියට ගන්න)</option>
+                <option value="rent">🔸 RENT - Offer Vehicle (කුලියට දෙන්න)</option>
+            </select>
+            <select id="vehicleSelect">
+                <option>Car (Sedan)</option><option>SUV / Crossover</option><option>Micro / Mini Car</option>
+                <option>Van</option><option>Three Wheel</option><option>Mini Bus</option><option>Large Bus</option>
+                <option>Mini Lorry</option><option>Large Lorry</option><option>Jeep</option><option>Motorcycle</option>
+            </select>
+            <select id="districtSelect">
+                <option>Colombo</option><option>Gampaha</option><option>Kalutara</option><option>Kandy</option>
+                <option>Matale</option><option>Nuwara Eliya</option><option>Galle</option><option>Matara</option>
+                <option>Hambantota</option><option>Jaffna</option><option>Kilinochchi</option><option>Mannar</option>
+                <option>Vavuniya</option><option>Mullaitivu</option><option>Batticaloa</option><option>Ampara</option>
+                <option>Trincomalee</option><option>Kurunegala</option><option>Puttalam</option><option>Anuradhapura</option>
+                <option>Polonnaruwa</option><option>Badulla</option><option>Monaragala</option><option>Ratnapura</option>
+                <option>Kegalle</option>
+            </select>
+            <input type="text" id="phoneInput" placeholder="📞 Phone Number">
+        </div>
+        <textarea id="descInput" rows="3" placeholder="Full description - Price, availability, terms & conditions..."></textarea>
+        <input type="file" id="imageUpload" accept="image/*" multiple style="margin: 15px 0;">
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <button id="featuredBtn" style="background:#f0b429; border:none; border-radius:40px; padding:12px 25px; font-weight:600;">⭐ Featured (+Rs.100)</button>
+            <button id="postBtn" class="btn-gold"><i class="fas fa-credit-card"></i> Pay & Post (Demo)</button>
+        </div>
+        <p id="loginWarning" style="color:red; margin-top:12px; display:none;">⚠️ Please login first</p>
+    </div>
+
+    <!-- User Dashboard -->
+    <div id="userDashboard" style="display: none;">
+        <div class="stats-grid">
+            <div class="stat-card"><i class="fas fa-chart-line"></i><h3 id="myAdsCount">0</h3><p>My Ads</p></div>
+            <div class="stat-card"><i class="fas fa-eye"></i><h3 id="myTotalViews">0</h3><p>Total Views</p></div>
+        </div>
+        <div style="background:white; border-radius:28px; padding:20px; margin-bottom:25px;">
+            <h4><i class="fas fa-list"></i> My Recent Ads</h4>
+            <div id="myAdsList" class="my-ads-list"></div>
+        </div>
+    </div>
+
+    <div id="adsContainer" class="ads-grid"></div>
+    <div id="paginationControls" class="pagination"></div>
+
+    <footer>
+        <p>© 2025 Lanka Vahan | Hire & Rent Vehicles | 25 Districts</p>
+        <p style="margin-top:10px;">Admin: admin@lankavahan.com | Admin Panel: /admin.html</p>
+    </footer>
+</div>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal hidden">
+    <div class="modal-content">
+        <h3 style="margin-bottom:20px;">Welcome Back</h3>
+        <input type="text" id="loginName" placeholder="Full Name" style="width:100%; padding:14px; border-radius:30px; border:1px solid #ccc; margin-bottom:12px;">
+        <input type="text" id="loginPhone" placeholder="Phone Number" style="width:100%; padding:14px; border-radius:30px; border:1px solid #ccc; margin-bottom:12px;">
+        <input type="password" id="loginPassword" placeholder="Admin Password (if admin)" style="width:100%; padding:14px; border-radius:30px; border:1px solid #ccc; margin-bottom:12px;">
+        <button id="doLoginBtn" class="btn-gold" style="width:100%;">Login / Register</button>
+        <button id="closeModalBtn" style="width:100%; margin-top:12px; padding:12px; border:none; background:#e2e8f0; border-radius:40px;">Cancel</button>
+        <p style="margin-top:15px; font-size:12px; text-align:center;">Admin: email: admin | password: admin123</p>
+    </div>
+</div>
+
+<script>
+    // ==================== CONFIG ====================
+    const ADMIN_EMAIL = "admin";
+    const ADMIN_PASS = "admin123";
+    
+    let currentUser = localStorage.getItem("lankaUser") ? JSON.parse(localStorage.getItem("lankaUser")) : null;
+    let allAds = JSON.parse(localStorage.getItem("allAds_Complete")) || [];
+    let allUsers = JSON.parse(localStorage.getItem("allUsers")) || [];
+    let currentTab = "hire";
+    let currentPage = 1;
+    let currentSearch = "";
+    let currentDistrict = "";
+    let featuredFlag = false;
+    
+    // ==================== HELPERS ====================
+    function saveAds() { localStorage.setItem("allAds_Complete", JSON.stringify(allAds)); }
+    function saveUsers() { localStorage.setItem("allUsers", JSON.stringify(allUsers)); }
+    
+    function addExpiry(ad) { let expiry = new Date(); expiry.setDate(expiry.getDate() + 30); ad.expiry = expiry.toISOString(); return ad; }
+    
+    function removeExpiredAds() { let now = new Date(); let oldCount = allAds.length; allAds = allAds.filter(ad => new Date(ad.expiry) > now); if(oldCount !== allAds.length) saveAds(); }
+    
+    // ==================== SAMPLE DATA ====================
+    if(allAds.length === 0) {
+        allAds = [
+            addExpiry({ id:1, type:"hire", vehicle:"Car (Sedan)", district:"Colombo", desc:"Toyota Allion, AC, good condition. Price: Rs.6000/day. Driver available.", phone:"0771234567", images:[], featured:true, userId:"admin", userName:"Admin", views:0, createdAt: new Date().toISOString() }),
+            addExpiry({ id:2, type:"rent", vehicle:"Van", district:"Kandy", desc:"Nissan Van 15 seater. Monthly rent Rs.50,000. School trips, family tours.", phone:"0765554444", images:[], featured:true, userId:"admin", userName:"Admin", views:0, createdAt: new Date().toISOString() }),
+            addExpiry({ id:3, type:"hire", vehicle:"Three Wheel", district:"Galle", desc:"Bajaj three wheel. Daily hire Rs.800. Good for city travel.", phone:"0917778888", images:[], featured:false, userId:"admin", userName:"Admin", views:0, createdAt: new Date().toISOString() })
+        ]; saveAds();
+    }
+    
+    if(allUsers.length === 0) {
+        allUsers = [{ name:"Admin User", phone:"admin", email:"admin", password:"admin123", isAdmin:true }];
+        saveUsers();
+    }
+    
+    function isAdmin() { return currentUser && currentUser.isAdmin === true; }
+    
+    // ==================== RENDER ADS (Admin sees ALL) ====================
+    function renderAds() {
+        removeExpiredAds();
+        let filtered = allAds;
+        
+        // Admin නම් type filter නොකර සියල්ල පෙන්වන්න
+        if(!isAdmin()) {
+            filtered = filtered.filter(ad => ad.type === currentTab);
+        }
+        
+        if(currentSearch.trim() !== "") {
+            filtered = filtered.filter(ad => ad.vehicle.toLowerCase().includes(currentSearch.toLowerCase()) || ad.desc.toLowerCase().includes(currentSearch.toLowerCase()));
+        }
+        if(currentDistrict !== "") {
+            filtered = filtered.filter(ad => ad.district === currentDistrict);
+        }
+        filtered.sort((a,b) => (b.featured?1:0) - (a.featured?1:0));
+        
+        const start = (currentPage-1)*3;
+        const paginated = filtered.slice(start, start+3);
+        const container = document.getElementById("adsContainer");
+        
+        if(paginated.length === 0) {
+            container.innerHTML = `<div style="background:white; border-radius:30px; padding:50px; text-align:center;">🚫 No ads found. Be the first to post!</div>`;
+            document.getElementById("paginationControls").innerHTML = "";
+            return;
+        }
+        
+        container.innerHTML = paginated.map(ad => `
+            <div class="ad-card ${ad.featured ? 'featured' : ''}">
+                <div class="img-gallery">
+                    ${ad.images && ad.images.length>0 ? ad.images.map(img => `<img src="${img}" onclick="openLightbox('${img}')">`).join('') : '<div style="display:flex; align-items:center; justify-content:center; width:100%; height:100%;"><i class="fas fa-car fa-4x" style="color:#cbd5e6;"></i></div>'}
+                </div>
+                <div class="ad-content">
+                    <span class="vehicle-tag"><i class="fas fa-tag"></i> ${ad.vehicle}</span>
+                    <div style="margin: 8px 0;"><i class="fas fa-map-marker-alt"></i> ${ad.district}</div>
+                    <div class="desc-text" id="desc-${ad.id}">${ad.desc.substring(0,120)}${ad.desc.length > 120 ? '...' : ''}</div>
+                    ${ad.desc.length > 120 ? `<button class="expand-btn" onclick="expandDesc(${ad.id}, \`${ad.desc.replace(/`/g, '\\`')}\`)">Read more <i class="fas fa-angle-down"></i></button>` : ''}
+                    <div class="call-buttons">
+                        <a href="tel:${ad.phone}" class="btn-call"><i class="fas fa-phone"></i> Call</a>
+                        <a href="https://wa.me/94${ad.phone.replace(/[^0-9]/g, '')}?text=Hi, I'm interested in your ${ad.vehicle}" target="_blank" class="btn-wa"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                    </div>
+                    ${ad.featured ? '<p style="color:#f5b042; margin-top:8px;"><i class="fas fa-star"></i> FEATURED AD</p>' : ''}
+                    <small><i class="fas fa-user"></i> ${ad.userName} | 📅 ${new Date(ad.createdAt).toLocaleDateString()}</small>
+                    ${isAdmin() ? `
+                        <div class="admin-actions">
+                            <button class="admin-del-btn" data-id="${ad.id}"><i class="fas fa-trash"></i> Delete</button>
+                            <button class="admin-feat-btn" data-id="${ad.id}">${ad.featured ? 'Unfeature' : 'Feature'}</button>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `).join("");
+        
+        const totalPages = Math.ceil(filtered.length/3);
+        let btns = ""; for(let i=1;i<=totalPages;i++) btns += `<button class="pageBtn" data-page="${i}">${i}</button>`;
+        document.getElementById("paginationControls").innerHTML = btns;
+        document.querySelectorAll(".pageBtn").forEach(btn => btn.addEventListener("click", (e)=>{ currentPage = parseInt(e.target.dataset.page); renderAds(); }));
+        
+        // Admin delete & feature buttons
+        if(isAdmin()) {
+            document.querySelectorAll(".admin-del-btn").forEach(btn => btn.addEventListener("click", (e) => {
+                let id = parseInt(btn.dataset.id);
+                if(confirm("Delete this ad?")) {
+                    allAds = allAds.filter(a => a.id !== id);
+                    saveAds();
+                    renderAds();
+                    renderUserDashboard();
+                }
+            }));
+            document.querySelectorAll(".admin-feat-btn").forEach(btn => btn.addEventListener("click", (e) => {
+                let id = parseInt(btn.dataset.id);
+                let ad = allAds.find(a => a.id === id);
+                if(ad) { ad.featured = !ad.featured; saveAds(); renderAds(); renderUserDashboard(); }
+            }));
+        }
+    }
+    
+    window.expandDesc = function(id, fullDesc) {
+        const el = document.getElementById(`desc-${id}`);
+        if(el.style.webkitLineClamp === "unset") {
+            el.style.webkitLineClamp = "3";
+            el.nextElementSibling.innerHTML = 'Read more <i class="fas fa-angle-down"></i>';
+        } else {
+            el.style.webkitLineClamp = "unset";
+            el.nextElementSibling.innerHTML = 'Show less <i class="fas fa-angle-up"></i>';
+        }
+    }
+    
+    window.openLightbox = function(imgSrc) {
+        const lb = document.createElement("div");
+        lb.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:2000;";
+        lb.innerHTML = `<img src="${imgSrc}" style="max-width:90%;max-height:80%;border-radius:20px;"><span style="position:absolute;top:20px;right:30px;color:white;font-size:40px;cursor:pointer;">&times;</span>`;
+        document.body.appendChild(lb);
+        lb.onclick = () => lb.remove();
+    }
+    
+    // ==================== USER DASHBOARD ====================
+    function renderUserDashboard() {
+        if(!currentUser) return;
+        const myAds = allAds.filter(ad => ad.userId === currentUser.phone);
+        document.getElementById("myAdsCount").innerText = myAds.length;
+        const container = document.getElementById("myAdsList");
+        if(myAds.length === 0) { container.innerHTML = "<p style='color:#777;'>No ads posted yet.</p>"; return; }
+        container.innerHTML = myAds.map(ad => `
+            <div class="my-ad-item">
+                <div><strong>${ad.vehicle}</strong> | ${ad.district} | ${ad.type}<br><small>${ad.desc.substring(0,60)}...</small></div>
+                <div>
+                    <button class="editAdBtn" data-id="${ad.id}" style="background:#f5b042; border:none; padding:6px 15px; border-radius:20px;">Edit</button>
+                    <button class="deleteAdBtn" data-id="${ad.id}" style="background:#dc3545; border:none; padding:6px 15px; border-radius:20px; color:white;">Delete</button>
+                </div>
+            </div>
+        `).join("");
+        
+        document.querySelectorAll(".deleteAdBtn").forEach(btn => btn.addEventListener("click", (e) => {
+            let id = parseInt(btn.dataset.id);
+            if(confirm("Delete this ad?")) { allAds = allAds.filter(a => a.id !== id); saveAds(); renderUserDashboard(); renderAds(); }
+        }));
+        document.querySelectorAll(".editAdBtn").forEach(btn => btn.addEventListener("click", (e) => {
+            let id = parseInt(btn.dataset.id);
+            let ad = allAds.find(a => a.id === id);
+            let newDesc = prompt("Edit Description:", ad.desc);
+            if(newDesc && newDesc.trim()) { ad.desc = newDesc; saveAds(); renderUserDashboard(); renderAds(); }
+        }));
+    }
+    
+    // ==================== POST AD ====================
+    function postNewAd() {
+        if(!currentUser) { alert("Please login first!"); document.getElementById("loginModal").classList.remove("hidden"); return; }
+        let type = document.getElementById("adTypeSelect").value;
+        let vehicle = document.getElementById("vehicleSelect").value;
+        let district = document.getElementById("districtSelect").value;
+        let phone = document.getElementById("phoneInput").value.trim();
+        let desc = document.getElementById("descInput").value.trim();
+        if(!phone || !desc) { alert("Phone & Description required."); return; }
+        let files = document.getElementById("imageUpload").files;
+        let images = [];
+        for(let i=0; i<Math.min(files.length,5); i++) images.push(URL.createObjectURL(files[i]));
+        let total = (type === "hire" ? 50 : 70) + (featuredFlag ? 100 : 0);
+        if(confirm(`💰 Demo Payment: Rs.${total}\n\nClick OK to post ad.`)) {
+            let newAd = addExpiry({ id: Date.now(), type: type, vehicle: vehicle, district: district, desc: desc, phone: phone, images: images, featured: featuredFlag, userId: currentUser.phone, userName: currentUser.name, views: 0, createdAt: new Date().toISOString() });
+            allAds.unshift(newAd); saveAds();
+            alert(`✅ Ad posted! Website earned Rs.${total} (Demo)`);
+            document.getElementById("phoneInput").value = ""; document.getElementById("descInput").value = ""; document.getElementById("imageUpload").value = ""; featuredFlag = false;
+            renderAds(); renderUserDashboard();
+        }
+    }
+    
+    // ==================== LOGIN SYSTEM ====================
+    function updateUIForUser() {
+        if(currentUser) {
+            document.getElementById("userNameDisplay").innerText = currentUser.name;
+            if(currentUser.isAdmin) {
+                document.getElementById("adminBadge").classList.remove("hidden");
+            } else {
+                document.getElementById("adminBadge").classList.add("hidden");
+            }
+            document.getElementById("loginWarning").style.display = "none";
+            document.getElementById("userDashboard").style.display = "block";
+            renderUserDashboard();
+        } else {
+            document.getElementById("userNameDisplay").innerText = "Guest";
+            document.getElementById("adminBadge").classList.add("hidden");
+            document.getElementById("loginWarning").style.display = "block";
+            document.getElementById("userDashboard").style.display = "none";
+        }
+        renderAds();
+    }
+    
+    // ==================== EVENT LISTENERS ====================
+    document.getElementById("hireToggleBtn").onclick = () => {
+        currentTab = "hire";
+        document.getElementById("hireToggleBtn").classList.add("active-hire");
+        document.getElementById("rentToggleBtn").classList.remove("active-rent");
+        if(!isAdmin()) { currentPage = 1; renderAds(); }
+        else { renderAds(); }
+    };
+    document.getElementById("rentToggleBtn").onclick = () => {
+        currentTab = "rent";
+        document.getElementById("rentToggleBtn").classList.add("active-rent");
+        document.getElementById("hireToggleBtn").classList.remove("active-hire");
+        if(!isAdmin()) { currentPage = 1; renderAds(); }
+        else { renderAds(); }
+    };
+    document.getElementById("searchBtn").onclick = () => { currentSearch = document.getElementById("searchInput").value; currentDistrict = document.getElementById("districtFilter").value; currentPage=1; renderAds(); };
+    document.getElementById("postBtn").addEventListener("click", postNewAd);
+    document.getElementById("featuredBtn").onclick = () => { featuredFlag = !featuredFlag; alert(featuredFlag ? "✨ Featured (+Rs.100)" : "Normal ad"); };
+    
+    // Login Modal
+    const modal = document.getElementById("loginModal");
+    document.getElementById("userBtn").onclick = () => modal.classList.remove("hidden");
+    document.getElementById("doLoginBtn").onclick = () => {
+        let name = document.getElementById("loginName").value.trim();
+        let phone = document.getElementById("loginPhone").value.trim();
+        let password = document.getElementById("loginPassword").value;
+        
+        // Admin check
+        if(name === ADMIN_EMAIL && password === ADMIN_PASS) {
+            currentUser = { name: "Admin", phone: "admin", email: ADMIN_EMAIL, isAdmin: true };
+            localStorage.setItem("lankaUser", JSON.stringify(currentUser));
+            modal.classList.add("hidden");
+            updateUIForUser();
+            alert("Welcome Admin! You can see all ads and manage them.");
+            return;
+        }
+        
+        if(!name || !phone) { alert("Enter name and phone"); return; }
+        
+        // Regular user
+        let existingUser = allUsers.find(u => u.phone === phone);
+        if(!existingUser) {
+            existingUser = { name, phone, isAdmin: false };
+            allUsers.push(existingUser);
+            saveUsers();
+        }
+        currentUser = { name: existingUser.name, phone: existingUser.phone, isAdmin: false };
+        localStorage.setItem("lankaUser", JSON.stringify(currentUser));
+        modal.classList.add("hidden");
+        updateUIForUser();
+        alert(`Welcome ${name}!`);
+    };
+    document.getElementById("closeModalBtn").onclick = () => modal.classList.add("hidden");
+    
+    // Initialize
+    if(currentUser) updateUIForUser();
+    else updateUIForUser();
+    
+    // Set initial active class
+    document.getElementById("hireToggleBtn").classList.add("active-hire");
+</script>
+</body>
+</html>

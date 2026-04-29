@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Lanka Vahan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: #0f172a; padding: 20px; min-height: 100vh; }
+        .admin-container { max-width: 1400px; margin: 0 auto; }
+        .admin-header { background: #1e293b; border-radius: 30px; padding: 25px; margin-bottom: 30px; color: white; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-box { background: #1e293b; border-radius: 25px; padding: 25px; color: white; text-align: center; transition: 0.3s; }
+        .stat-box i { font-size: 45px; color: #f5b042; margin-bottom: 10px; }
+        .stat-box h2 { font-size: 36px; }
+        .section-card { background: white; border-radius: 28px; padding: 25px; margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; }
+        .btn-danger { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
+        .btn-warning { background: #f5b042; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
+        .btn-logout { background: #dc3545; border: none; padding: 12px 25px; border-radius: 40px; color: white; cursor: pointer; }
+        .login-form { max-width: 400px; margin: 100px auto; background: white; padding: 35px; border-radius: 35px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .login-form input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 40px; border: 1px solid #ccc; }
+        .btn-login { background: #1e4a76; color: white; width: 100%; padding: 14px; border: none; border-radius: 40px; font-weight: bold; cursor: pointer; }
+        .hidden { display: none; }
+        h3 { margin-bottom: 20px; }
+        .small-text { font-size: 12px; color: #666; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div id="loginSection" class="login-form">
+    <h2 style="text-align:center; margin-bottom:20px;"><i class="fas fa-shield-alt"></i> Admin Login</h2>
+    <input type="text" id="adminUser" placeholder="Username (admin)">
+    <input type="password" id="adminPass" placeholder="Password (admin123)">
+    <button class="btn-login" id="adminLoginBtn"><i class="fas fa-lock"></i> Login</button>
+</div>
+
+<div id="adminPanel" class="admin-container hidden">
+    <div class="admin-header">
+        <h2><i class="fas fa-shield-alt"></i> Admin Dashboard</h2>
+        <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+    
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-box"><i class="fas fa-users"></i><h2 id="totalUsers">0</h2><p>Registered Users</p></div>
+        <div class="stat-box"><i class="fas fa-car"></i><h2 id="totalAds">0</h2><p>Total Ads</p></div>
+        <div class="stat-box"><i class="fas fa-handshake"></i><h2 id="hireAds">0</h2><p>Hire Ads</p></div>
+        <div class="stat-box"><i class="fas fa-key"></i><h2 id="rentAds">0</h2><p>Rent Ads</p></div>
+        <div class="stat-box"><i class="fas fa-rupee-sign"></i><h2 id="totalEarnings">0</h2><p>Total Earnings</p></div>
+    </div>
+    
+    <div class="section-card">
+        <h3><i class="fas fa-users"></i> All Users</h3>
+        <div id="usersList" style="overflow-x:auto;"></div>
+        <p class="small-text"><i class="fas fa-info-circle"></i> Delete user will delete all their ads</p>
+    </div>
+    
+    <div class="section-card">
+        <h3><i class="fas fa-ad"></i> All Ads</h3>
+        <div id="adsList" style="overflow-x:auto;"></div>
+    </div>
+</div>
+
+<script>
+    const ADMIN_USER = "admin";
+    const ADMIN_PASS = "admin123";
+    
+    function getData() {
+        return {
+            users: JSON.parse(localStorage.getItem("allUsers")) || [],
+            ads: JSON.parse(localStorage.getItem("allAds_Complete")) || []
+        };
+    }
+    
+    function saveData(users, ads) {
+        localStorage.setItem("allUsers", JSON.stringify(users));
+        localStorage.setItem("allAds_Complete", JSON.stringify(ads));
+    }
+    
+    function updateStats() {
+        const { users, ads } = getData();
+        document.getElementById("totalUsers").innerText = users.length;
+        document.getElementById("totalAds").innerText = ads.length;
+        document.getElementById("hireAds").innerText = ads.filter(a => a.type === "hire").length;
+        document.getElementById("rentAds").innerText = ads.filter(a => a.type === "rent").length;
+        let earnings = (ads.filter(a => a.type === "hire").length * 50) + (ads.filter(a => a.type === "rent").length * 70) + (ads.filter(a => a.featured === true).length * 100);
+        document.getElementById("totalEarnings").innerText = "Rs." + earnings;
+    }
+    
+    function renderUsers() {
+        const { users, ads } = getData();
+        const container = document.getElementById("usersList");
+        if(users.length === 0) { container.innerHTML = "<p>No users registered yet.</p>"; return; }
+        let html = `<table style="width:100%;">
+            <tr><th>Name</th><th>Phone</th><th>Email</th><th>Ads Posted</th><th>Action</th></tr>`;
+        users.forEach(u => {
+            if(u.isAdmin) return;
+            html += `<tr>
+                <td>${u.name || '-'}</td>
+                <td>${u.phone}</td>
+                <td>${u.email || '-'}</td>
+                <td>${ads.filter(a => a.userId === u.phone).length}</td>
+                <td><button class="delUserBtn" data-phone="${u.phone}" class="btn-danger"><i class="fas fa-trash"></i> Delete</button></td>
+            </tr>`;
+        });
+        html += `</table>`;
+        container.innerHTML = html;
+        
+        document.querySelectorAll(".delUserBtn").forEach(btn => btn.addEventListener("click", (e) => {
+            let phone = btn.dataset.phone;
+            if(confirm("Delete this user and ALL their ads?")) {
+                let { users, ads } = getData();
+                users = users.filter(u => u.phone !== phone);
+                ads = ads.filter(a => a.userId !== phone);
+                saveData(users, ads);
+                updateStats();
+                renderUsers();
+                renderAds();
+            }
+        }));
+    }
+    
+    function renderAds() {
+        const { ads } = getData();
+        const container = document.getElementById("adsList");
+        if(ads.length === 0) { container.innerHTML = "<p>No ads posted yet.</p>"; return; }
+        let html = `<table style="width:100%;">
+            <tr><th>Vehicle</th><th>District</th><th>Type</th><th>User</th><th>Phone</th><th>Featured</th><th>Action</th></tr>`;
+        ads.forEach(ad => {
+            html += `<tr>
+                <td>${ad.vehicle}</td>
+                <td>${ad.district}</td>
+                <td>${ad.type === 'hire' ? '🔹 HIRE' : '🔸 RENT'}</td>
+                <td>${ad.userName}</td>
+                <td>${ad.phone}</td>
+                <td>${ad.featured ? '⭐ Yes' : 'No'}</td>
+                <td>
+                    <button class="adminDelAdBtn" data-id="${ad.id}" style="background:#dc3545; color:white; border:none; padding:5px 12px; border-radius:20px;"><i class="fas fa-trash"></i> Delete</button>
+                    <button class="adminFeatAdBtn" data-id="${ad.id}" style="background:#f5b042; border:none; padding:5px 12px; border-radius:20px; margin-left:5px;">${ad.featured ? 'Unfeature' : 'Feature'}</button>
+                </td>
+            </tr>`;
+        });
+        html += `</table>`;
+        container.innerHTML = html;
+        
+        document.querySelectorAll(".adminDelAdBtn").forEach(btn => btn.addEventListener("click", (e) => {
+            let id = parseInt(btn.dataset.id);
+            if(confirm("Delete this ad?")) {
+                let { users, ads } = getData();
+                ads = ads.filter(a => a.id !== id);
+                saveData(users, ads);
+                updateStats();
+                renderAds();
+            }
+        }));
+        document.querySelectorAll(".adminFeatAdBtn").forEach(btn => btn.addEventListener("click", (e) => {
+            let id = parseInt(btn.dataset.id);
+            let { users, ads } = getData();
+            let ad = ads.find(a => a.id === id);
+            if(ad) { ad.featured = !ad.featured; saveData(users, ads); updateStats(); renderAds(); }
+        }));
+    }
+    
+    // Login Logic
+    document.getElementById("adminLoginBtn").onclick = () => {
+        let user = document.getElementById("adminUser").value;
+        let pass = document.getElementById("adminPass").value;
+        if(user === ADMIN_USER && pass === ADMIN_PASS) {
+            localStorage.setItem("adminLoggedIn", "true");
+            document.getElementById("loginSection").classList.add("hidden");
+            document.getElementById("adminPanel").classList.remove("hidden");
+            updateStats();
+            renderUsers();
+            renderAds();
+        } else {
+            alert("Invalid credentials!");
+        }
+    };
+    
+    document.getElementById("logoutBtn").onclick = () => {
+        localStorage.removeItem("adminLoggedIn");
+        document.getElementById("loginSection").classList.remove("hidden");
+        document.getElementById("adminPanel").classList.add("hidden");
+        document.getElementById("adminUser").value = "";
+        document.getElementById("adminPass").value = "";
+    };
+    
+    // Check if already logged in
+    if(localStorage.getItem("adminLoggedIn") === "true") {
+        document.getElementById("loginSection").classList.add("hidden");
+        document.getElementById("adminPanel").classList.remove("hidden");
+        updateStats();
+        renderUsers();
+        renderAds();
+    }
+</script>
+</body>
+</html>
